@@ -566,7 +566,7 @@ export const FeedbackExtension = {
           padding: 12px;
           margin: 12px 0;
           border: 1px solid #ddd;
-          border-radius: 8px;
+          border-radius: 20px; /* Rounded corners */
           resize: vertical;
           min-height: 80px;
           font-size: 14px;
@@ -604,7 +604,7 @@ export const FeedbackExtension = {
           <span class="star" data-value="4">★</span>
           <span class="star" data-value="5">★</span>
         </div>
-        <textarea id="feedbackText" placeholder="Please provide any suggestions to improve our service..." class="textarea-placeholder"></textarea>
+        <textarea id="feedbackText" placeholder="Share your feedback with us..." class="textarea-placeholder"></textarea>
         <button class="submit-btn" id="submitFeedback">Submit</button>
       </div>
     `;
