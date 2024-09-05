@@ -531,92 +531,227 @@ export const FeedbackExtension = {
   match: ({ trace }) =>
     trace.type === 'ext_feedback' || trace.payload.name === 'ext_feedback',
   render: ({ trace, element }) => {
-    const feedbackContainer = document.createElement('div')
+    const feedbackContainer = document.createElement('div');
 
     feedbackContainer.innerHTML = `
-          <style>
-            .vfrc-feedback {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
+      <style>
+        .feedback-container {
+          background-color: white;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          max-width: 300px;
+          margin: 0 auto;
+        }
+        .feedback-title {
+          font-size: 16px;
+          font-weight: bold;
+          margin-bottom: 10px;
+          color: #333;
+        }
+        .star-rating {
+          font-size: 24px;
+          color: #ddd;
+          cursor: pointer;
+        }
+        .star-rating .star {
+          display: inline-block;
+          transition: color 0.2s;
+        }
+        .star-rating .star.active {
+          color: gold;
+        }
+        textarea {
+          width: 100%;
+          padding: 12px;
+          margin: 12px 0;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          resize: vertical;
+          min-height: 80px;
+          font-size: 14px;
+          box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+          transition: border-color 0.2s;
+        }
+        textarea:focus {
+          border-color: #4a00e0;
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(74, 0, 224, 0.2);
+        }
+        .textarea-placeholder {
+          color: #888;
+        }
+        .submit-btn {
+          background: linear-gradient(to right, #4a00e0, #2a00a0);
+          color: white;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+          width: 100%;
+        }
+        .submit-btn:hover {
+          opacity: 0.9;
+        }
+      </style>
+      <div class="feedback-container">
+        <div class="feedback-title">Please give your feedback on our customer service:</div>
+        <div class="star-rating" id="starRating">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+        <textarea id="feedbackText" placeholder="Please provide any suggestions to improve our service..." class="textarea-placeholder"></textarea>
+        <button class="submit-btn" id="submitFeedback">Submit</button>
+      </div>
+    `;
 
-            .vfrc-feedback--description {
-                font-size: 0.8em;
-                color: grey;
-                pointer-events: none;
-            }
+    let selectedRating = 0;
 
-            .vfrc-feedback--buttons {
-                display: flex;
-            }
+    const starRating = feedbackContainer.querySelector('#starRating');
+    const stars = starRating.querySelectorAll('.star');
+    const feedbackText = feedbackContainer.querySelector('#feedbackText');
+    const submitButton = feedbackContainer.querySelector('#submitFeedback');
 
-            .vfrc-feedback--button {
-                margin: 0;
-                padding: 0;
-                margin-left: 0px;
-                border: none;
-                background: none;
-                opacity: 0.2;
-            }
+    function updateStars(rating) {
+      stars.forEach((star, index) => {
+        star.classList.toggle('active', index < rating);
+      });
+    }
 
-            .vfrc-feedback--button:hover {
-              opacity: 0.5; /* opacity on hover */
-            }
+    starRating.addEventListener('click', (event) => {
+      if (event.target.classList.contains('star')) {
+        selectedRating = parseInt(event.target.dataset.value);
+        updateStars(selectedRating);
+      }
+    });
 
-            .vfrc-feedback--button.selected {
-              opacity: 0.6;
-            }
+    starRating.addEventListener('mouseover', (event) => {
+      if (event.target.classList.contains('star')) {
+        updateStars(parseInt(event.target.dataset.value));
+      }
+    });
 
-            .vfrc-feedback--button.disabled {
-                pointer-events: none;
-            }
+    starRating.addEventListener('mouseout', () => {
+      updateStars(selectedRating);
+    });
 
-            .vfrc-feedback--button:first-child svg {
-                fill: none; /* color for thumb up */
-                stroke: none;
-                border: none;
-                margin-left: 6px;
-            }
+    submitButton.addEventListener('click', () => {
+      if (selectedRating === 0) {
+        alert('Please select a rating before submitting.');
+        return;
+      }
 
-            .vfrc-feedback--button:last-child svg {
-                margin-left: 4px;
-                fill: none; /* color for thumb down */
-                stroke: none;
-                border: none;
-                transform: rotate(180deg);
-            }
-          </style>
-          <div class="vfrc-feedback">
-            <div class="vfrc-feedback--description">Was this helpful?</div>
-            <div class="vfrc-feedback--buttons">
-              <button class="vfrc-feedback--button" data-feedback="1">${SVG_Thumb}</button>
-              <button class="vfrc-feedback--button" data-feedback="0">${SVG_Thumb}</button>
-            </div>
-          </div>
-        `
+      const feedback = {
+        rating: selectedRating,
+        comment: feedbackText.value.trim(),
+      };
 
-    feedbackContainer
-      .querySelectorAll('.vfrc-feedback--button')
-      .forEach((button) => {
-        button.addEventListener('click', function (event) {
-          const feedback = this.getAttribute('data-feedback')
-          window.voiceflow.chat.interact({
-            type: 'complete',
-            payload: { feedback: feedback },
-          })
+      // Here you would typically send this feedback to your server
+      console.log('Feedback submitted:', feedback);
 
-          feedbackContainer
-            .querySelectorAll('.vfrc-feedback--button')
-            .forEach((btn) => {
-              btn.classList.add('disabled')
-              if (btn === this) {
-                btn.classList.add('selected')
-              }
-            })
-        })
-      })
+      // For Voiceflow integration:
+      window.voiceflow.chat.interact({
+        type: 'complete',
+        payload: feedback,
+      });
 
-    element.appendChild(feedbackContainer)
+      // Clear the form and thank the user
+      feedbackContainer.innerHTML = '<p>Thank you for your feedback!</p>';
+    });
+
+    element.appendChild(feedbackContainer);
+  },
+}
+
+export const MatrixEffectExtension = {
+  name: 'MatrixEffect',
+  type: 'effect',
+  match: ({ trace }) =>
+    trace.type === 'ext_matrix' || trace.payload.name === 'ext_matrix',
+  effect: ({ trace }) => {
+    let canvas = document.getElementById('matrix-canvas');
+
+    // If canvas does not exist, create it
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.id = 'matrix-canvas';
+      canvas.style.position = 'fixed';
+      canvas.style.zIndex = '999';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+      canvas.style.pointerEvents = 'none';
+      document.body.appendChild(canvas);
+    }
+
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const nums = '0123456789';
+
+    // Create an array to hold all characters with equal distribution
+    const balancedAlphabet = [
+      ...katakana.split(''),
+      ...latin.split(''),
+      ...nums.split(''),
+    ];
+
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+    const rainDrops = Array(columns).fill(1);
+
+    let animationId;
+    const draw = () => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#0F0';
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < rainDrops.length; i++) {
+        const text = balancedAlphabet[Math.floor(Math.random() * balancedAlphabet.length)];
+        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          rainDrops[i] = 0;
+        }
+        rainDrops[i]++;
+      }
+    };
+
+    const animate = () => {
+      animationId = requestAnimationFrame(animate);
+      draw();
+    };
+
+    // Stop any existing animation
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+    }
+
+    // Start the animation
+    animate();
+
+    // Stop the animation after 10 seconds
+    const stopAnimation = () => {
+      cancelAnimationFrame(animationId);
+      if (canvas) {
+        canvas.remove();
+      }
+    };
+    setTimeout(stopAnimation, 10000);
+
+    // Return a cleanup function
+    return () => {
+      stopAnimation();
+    };
   },
 }
