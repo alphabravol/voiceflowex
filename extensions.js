@@ -543,20 +543,27 @@ export const FeedbackExtension = {
           width: 100%;
           box-sizing: border-box;
           font-family: sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         .feedback-title {
-          font-size: 14px;
-          font-weight: normal;
+          font-size: 16px; /* Increased font size */
+          font-weight: bold; /* Match submit button font weight */
           margin-bottom: 12px;
           color: #333;
+          text-align: center; /* Center align text */
         }
         .star-rating {
-          font-size: 20px;
+          font-size: 24px; /* Increased star size */
           color: #e0e0e0;
           margin-bottom: 12px;
+          justify-content: center; /* Center align stars */
+          display: flex;
         }
         .star-rating .star {
           display: inline-block;
+          margin: 0 8px; /* Add spacing between stars */
         }
         .star-rating .star.active {
           color: #ffd700;
@@ -567,10 +574,11 @@ export const FeedbackExtension = {
           margin: 8px 0;
           border: 1px solid #e0e0e0;
           border-radius: 4px;
-          resize: vertical;
-          min-height: 60px;
           font-size: 14px;
           box-sizing: border-box;
+          resize: none; /* Remove scrollbar */
+          height: 60px; /* Set fixed height */
+          font-family: inherit; /* Inherit font from container */
         }
         .submit-btn {
           background-color: #6B4EFF;
@@ -580,6 +588,7 @@ export const FeedbackExtension = {
           border-radius: 4px;
           cursor: pointer;
           font-size: 14px;
+          font-weight: bold; /* Match title font weight */
           width: 100%;
           margin-top: 8px;
         }
