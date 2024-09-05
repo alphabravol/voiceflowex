@@ -565,7 +565,7 @@ export const FeedbackExtension = {
           color: gold;
         }
         textarea {
-          width: 100%;
+          width: 100%; /* Full width of container */
           padding: 12px;
           margin: 12px 0;
           border: 1px solid #ddd;
