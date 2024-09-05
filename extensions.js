@@ -789,7 +789,7 @@ export const MultiSelectExtension = {
           max-width: 400px;
         }
         .dropdown-button {
-          background-color: #ffffff;
+          background-color: #f0f0f0;
           color: white;
           padding: 8px 16px;
           border: none;
