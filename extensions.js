@@ -572,7 +572,7 @@ export const FeedbackExtension = {
           width: 100%;
           padding: 8px;
           margin: 8px 0;
-          border: 1px solid #876BEF; /* Set initial border color to match hover color */
+          border: 1px solid #e0e0e0; /* Set initial border color to light purple */
           border-radius: 4px;
           font-size: 14px;
           box-sizing: border-box;
@@ -580,8 +580,8 @@ export const FeedbackExtension = {
           height: 60px; /* Set fixed height */
           font-family: inherit; /* Inherit font from container */
         }
-        textarea:focus {
-          border-color: #6B4EFF; /* Change border color on focus */
+        textarea:hover {
+          border-color: #6B4EFF; /* Change border color on hover */
         }
         .submit-btn {
           background-color: #6B4EFF;
