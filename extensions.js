@@ -591,7 +591,7 @@ export const FeedbackExtension = {
           color: #888;
         }
         .submit-btn {
-          background: linear-gradient(to right, #4a00e0, #2a00a0);
+          background: linear-gradient(to right, #4a00e0, #000000);
           color: white;
           padding: 10px 15px;
           border: none;
