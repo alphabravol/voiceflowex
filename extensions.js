@@ -792,8 +792,8 @@ export const MultiSelectExtension = {
           background-color: #f0f0f0;
           color: #333; /* Dark gray text */
           padding: 8px 16px;
-          border: 2px solid transparent; /* Initially invisible border */
-          border-radius: 4px;
+          border: 1px solid transparent; /* Initially invisible border */
+          border-radius: 2px;
           cursor: pointer;
           font-size: 14px;
           width: 100%;
