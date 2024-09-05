@@ -869,4 +869,4 @@ export const MultipleSelectionExtension = {
       payload: { selectedOptions },
     });
   },
-}
+};
