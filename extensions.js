@@ -828,7 +828,7 @@ export const MultiSelectExtension = {
           display: block;
         }
         .dropdown-item {
-          padding: 12px 16px;
+          padding: 8px 10px;
           cursor: pointer;
           border-bottom: 1px solid #eee;
           display: flex;
