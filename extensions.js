@@ -536,7 +536,7 @@ export const FeedbackExtension = {
     feedbackContainer.innerHTML = `
       <style>
         .feedback-container {
-          background-color: #ffffff;
+          background-color: #a57afa;
           padding: 16px;
           border-radius: 8px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
