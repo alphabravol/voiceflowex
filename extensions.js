@@ -579,6 +579,10 @@ export const FeedbackExtension = {
           resize: none; /* Remove scrollbar */
           height: 60px; /* Set fixed height */
           font-family: inherit; /* Inherit font from container */
+          background-color: #6B4EFF; /* Set initial background color to match submit button */
+        }
+        textarea:hover {
+          background-color: #876BEF; /* Change hover background color */
         }
         .submit-btn {
           background-color: #6B4EFF;
