@@ -542,9 +542,13 @@ export const FeedbackExtension = {
           padding: 20px;
           border-radius: 8px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          width: 100%;
           max-width: 300px;
           margin: 0 auto;
           font-family: 'Roboto', sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
         .feedback-title {
           font-size: 16px;
@@ -557,7 +561,6 @@ export const FeedbackExtension = {
           font-size: 24px;
           color: #ddd;
           cursor: pointer;
-          text-align: center;
           margin-bottom: 12px;
         }
         .star-rating .star {
@@ -567,10 +570,16 @@ export const FeedbackExtension = {
         .star-rating .star.active {
           color: gold;
         }
+        .feedback-form {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
         textarea {
           width: 100%;
           padding: 12px;
-          margin: 12px auto;
+          margin: 12px 0;
           border: 1px solid #ddd;
           border-radius: 20px;
           resize: vertical;
@@ -580,7 +589,6 @@ export const FeedbackExtension = {
           box-shadow: none;
           transition: border-color 0.2s;
           font-family: 'Roboto', sans-serif;
-          display: block;
         }
         textarea:focus {
           border-color: #4a00e0;
@@ -591,7 +599,7 @@ export const FeedbackExtension = {
           color: #888;
         }
         .submit-btn {
-          background: linear-gradient(to right, #4a00e0, #000000);
+          background: linear-gradient(to right, #4a00e0, #2a00a0);
           color: white;
           padding: 10px 15px;
           border: none;
@@ -600,8 +608,7 @@ export const FeedbackExtension = {
           font-size: 14px;
           width: 100%;
           font-family: 'Roboto', sans-serif;
-          display: block;
-          margin: 12px auto 0;
+          margin-top: 12px;
         }
         .submit-btn:hover {
           opacity: 0.9;
@@ -616,12 +623,63 @@ export const FeedbackExtension = {
           <span class="star" data-value="4">★</span>
           <span class="star" data-value="5">★</span>
         </div>
-        <textarea id="feedbackText" placeholder="Share your experience with us..." class="textarea-placeholder"></textarea>
-        <button class="submit-btn" id="submitFeedback">Submit Feedback</button>
+        <div class="feedback-form">
+          <textarea id="feedbackText" placeholder="Share your experience with us..." class="textarea-placeholder"></textarea>
+          <button class="submit-btn" id="submitFeedback">Submit Feedback</button>
+        </div>
       </div>
     `;
 
-    // ... (rest of the JavaScript code remains the same)
+    let selectedRating = 0;
+
+    const starRating = feedbackContainer.querySelector('#starRating');
+    const stars = starRating.querySelectorAll('.star');
+    const feedbackText = feedbackContainer.querySelector('#feedbackText');
+    const submitButton = feedbackContainer.querySelector('#submitFeedback');
+
+    function updateStars(rating) {
+      stars.forEach((star, index) => {
+        star.classList.toggle('active', index < rating);
+      });
+    }
+
+    starRating.addEventListener('click', (event) => {
+      if (event.target.classList.contains('star')) {
+        selectedRating = parseInt(event.target.dataset.value);
+        updateStars(selectedRating);
+      }
+    });
+
+    starRating.addEventListener('mouseover', (event) => {
+      if (event.target.classList.contains('star')) {
+        updateStars(parseInt(event.target.dataset.value));
+      }
+    });
+
+    starRating.addEventListener('mouseout', () => {
+      updateStars(selectedRating);
+    });
+
+    submitButton.addEventListener('click', () => {
+      if (selectedRating === 0) {
+        alert('Please select a rating before submitting.');
+        return;
+      }
+
+      const feedback = {
+        rating: selectedRating,
+        comment: feedbackText.value.trim(),
+      };
+
+      console.log('Feedback submitted:', feedback);
+
+      window.voiceflow.chat.interact({
+        type: 'complete',
+        payload: feedback,
+      });
+
+      feedbackContainer.innerHTML = '<p>Thank you for your feedback!</p>';
+    });
 
     element.appendChild(feedbackContainer);
   },
