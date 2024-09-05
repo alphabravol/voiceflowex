@@ -38,8 +38,11 @@
   <canvas id="matrix-canvas"></canvas>
   <div id="flat-chat"></div>
   <div id="voiceflow-chat-frame"></div>
+  
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  
   <script type="module">
+    // Import the MultipleSelectionExtension from extensions.js
     import {
       DisableInputExtension,
       VideoExtension,
@@ -52,8 +55,10 @@
       ConfettiExtension,
       MatrixEffectExtension,
       FeedbackExtension,
+      MultipleSelectionExtension, // Import the extension
     } from '/extensions.js';
 
+    // Load the Voiceflow chat with extensions
     (function (d, t) {
       var v = d.createElement(t),
         s = d.getElementsByTagName(t)[0];
@@ -83,6 +88,7 @@
               ConfettiExtension,
               MatrixEffectExtension,
               FeedbackExtension,
+              MultipleSelectionExtension, // Add the extension here
             ],
           },
         });

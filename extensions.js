@@ -536,7 +536,7 @@ export const FeedbackExtension = {
     feedbackContainer.innerHTML = `
       <style>
         .feedback-container {
-          background-color: #a57afa;
+          background-color: #ffffff;
           padding: 16px;
           border-radius: 8px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -751,5 +751,168 @@ export const MatrixEffectExtension = {
     return () => {
       stopAnimation();
     };
+  },
+}
+
+export const MultiSelectExtension = {
+  name: 'MultiSelect',
+  type: 'response',
+  match: ({ trace }) =>
+    trace.type === 'ext_multiselect' || trace.payload.name === 'ext_multiselect',
+  render: ({ trace, element }) => {
+    const multiSelectContainer = document.createElement('div');
+
+    multiSelectContainer.innerHTML = `
+      <style>
+        .multiselect-container {
+          background-color: #ffffff;
+          padding: 16px;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          width: 100%;
+          box-sizing: border-box;
+          font-family: sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .multiselect-title {
+          font-size: 16px;
+          font-weight: bold;
+          margin-bottom: 12px;
+          color: #333;
+          text-align: center;
+        }
+        .dropdown {
+          position: relative;
+          width: 100%;
+          max-width: 400px;
+        }
+        .dropdown-button {
+          background-color: #6B4EFF;
+          color: white;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+          width: 100%;
+          text-align: left;
+          position: relative;
+        }
+        .dropdown-button::after {
+          content: '▼';
+          position: absolute;
+          right: 16px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+        .dropdown-list {
+          display: none;
+          position: absolute;
+          background-color: #ffffff;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          margin-top: 8px;
+          width: 100%;
+          max-height: 200px;
+          overflow-y: auto;
+          border-radius: 4px;
+          z-index: 10;
+        }
+        .dropdown-list.active {
+          display: block;
+        }
+        .dropdown-item {
+          padding: 8px 16px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .dropdown-item:hover {
+          background-color: #f0f0f0;
+        }
+        .checkbox {
+          margin-right: 8px;
+        }
+        .submit-btn {
+          background-color: #6B4EFF;
+          color: white;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: bold;
+          width: 100%;
+          margin-top: 8px;
+        }
+      </style>
+      <div class="multiselect-container">
+        <div class="multiselect-title">Select your preferences:</div>
+        <div class="dropdown">
+          <button class="dropdown-button" id="dropdownButton">Select options</button>
+          <div class="dropdown-list" id="dropdownList">
+            <div class="dropdown-item">
+              <input type="checkbox" class="checkbox" value="Option 1" />
+              <span>Option 1</span>
+            </div>
+            <div class="dropdown-item">
+              <input type="checkbox" class="checkbox" value="Option 2" />
+              <span>Option 2</span>
+            </div>
+            <div class="dropdown-item">
+              <input type="checkbox" class="checkbox" value="Option 3" />
+              <span>Option 3</span>
+            </div>
+            <div class="dropdown-item">
+              <input type="checkbox" class="checkbox" value="Option 4" />
+              <span>Option 4</span>
+            </div>
+          </div>
+        </div>
+        <button class="submit-btn" id="submitMultiSelect">Submit</button>
+      </div>
+    `;
+
+    const dropdownButton = multiSelectContainer.querySelector('#dropdownButton');
+    const dropdownList = multiSelectContainer.querySelector('#dropdownList');
+    const checkboxes = dropdownList.querySelectorAll('.checkbox');
+    const submitButton = multiSelectContainer.querySelector('#submitMultiSelect');
+
+    // Toggle dropdown list visibility
+    dropdownButton.addEventListener('click', () => {
+      dropdownList.classList.toggle('active');
+    });
+
+    // Capture selected options
+    submitButton.addEventListener('click', () => {
+      const selectedOptions = [];
+      checkboxes.forEach((checkbox) => {
+        if (checkbox.checked) {
+          selectedOptions.push(checkbox.value);
+        }
+      });
+
+      if (selectedOptions.length === 0) {
+        alert('Please select at least one option.');
+        return;
+      }
+
+      const feedback = {
+        selected: selectedOptions,
+      };
+
+      console.log('Multi-select submitted:', feedback);
+
+      window.voiceflow.chat.interact({
+        type: 'complete',
+        payload: feedback,
+      });
+
+      multiSelectContainer.innerHTML = '<p>Thank you for your selections!</p>';
+    });
+
+    element.appendChild(multiSelectContainer);
   },
 }
