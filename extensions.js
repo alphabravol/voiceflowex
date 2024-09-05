@@ -855,10 +855,10 @@ export const MultiSelectExtension = {
         <div class="dropdown">
           <button class="dropdown-button" id="dropdownButton">Select options</button>
           <div class="dropdown-list" id="dropdownList">
-            <div class="dropdown-item" data-value="Option 1">Option 1</div>
-            <div class="dropdown-item" data-value="Option 2">Option 2</div>
-            <div class="dropdown-item" data-value="Option 3">Option 3</div>
-            <div class="dropdown-item" data-value="Option 4">Option 4</div>
+            <div class="dropdown-item" data-value="Option 1">Crunch</div>
+            <div class="dropdown-item" data-value="Option 2">Sauce</div>
+            <div class="dropdown-item" data-value="Option 3">Fruit</div>
+            <div class="dropdown-item" data-value="Option 4">without</div>
           </div>
         </div>
         <button class="submit-btn" id="submitMultiSelect">Submit</button>
