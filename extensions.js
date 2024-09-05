@@ -536,7 +536,7 @@ export const FeedbackExtension = {
     feedbackContainer.innerHTML = `
       <style>
         .feedback-container {
-          background-color: white;
+          background-color: #f7f7f7; /* Unify background color */
           padding: 20px;
           border-radius: 8px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -570,7 +570,8 @@ export const FeedbackExtension = {
           resize: vertical;
           min-height: 80px;
           font-size: 14px;
-          box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+          box-shadow: none; /* Remove shadow */
+          background-color: white; /* Ensure consistent background */
           transition: border-color 0.2s;
         }
         textarea:focus {
