@@ -754,165 +754,119 @@ export const MatrixEffectExtension = {
   },
 }
 
-export const MultiSelectExtension = {
-  name: 'MultiSelect',
+export const MultipleSelectionExtension = {
+  name: 'MultipleSelection',
   type: 'response',
   match: ({ trace }) =>
-    trace.type === 'ext_multiselect' || trace.payload.name === 'ext_multiselect',
+    trace.type === 'ext_multiple_selection' || trace.payload.name === 'ext_multiple_selection',
   render: ({ trace, element }) => {
-    const multiSelectContainer = document.createElement('div');
+    const container = document.createElement('div');
 
-    multiSelectContainer.innerHTML = `
+    container.innerHTML = `
       <style>
-        .multiselect-container {
-          background-color: #ffffff;
-          padding: 16px;
-          border-radius: 8px;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          width: 100%;
-          box-sizing: border-box;
-          font-family: sans-serif;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        .multiselect-title {
-          font-size: 16px;
-          font-weight: bold;
-          margin-bottom: 12px;
-          color: #333;
-          text-align: center;
-        }
-        .dropdown {
+        .dropdown-container {
           position: relative;
+          display: inline-block;
           width: 100%;
-          max-width: 400px;
+          font-family: sans-serif;
         }
+
         .dropdown-button {
-          background-color: #6B4EFF;
-          color: white;
-          padding: 8px 16px;
-          border: none;
+          width: 100%;
+          padding: 10px;
+          background-color: #f0f0f0;
+          border: 1px solid #ccc;
           border-radius: 4px;
           cursor: pointer;
-          font-size: 14px;
-          width: 100%;
+          font-size: 16px;
           text-align: left;
-          position: relative;
         }
-        .dropdown-button::after {
-          content: '▼';
-          position: absolute;
-          right: 16px;
-          top: 50%;
-          transform: translateY(-50%);
+
+        .dropdown-button:hover {
+          background-color: #ddd;
         }
-        .dropdown-list {
+
+        .dropdown-content {
           display: none;
           position: absolute;
           background-color: #ffffff;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          margin-top: 8px;
-          width: 100%;
+          min-width: 100%;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+          z-index: 1;
+          border-radius: 4px;
           max-height: 200px;
           overflow-y: auto;
-          border-radius: 4px;
-          z-index: 10;
         }
-        .dropdown-list.active {
-          display: block;
-        }
-        .dropdown-item {
-          padding: 8px 16px;
+
+        .dropdown-content .dropdown-item {
+          padding: 10px;
           cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+          border-bottom: 1px solid #eee;
         }
-        .dropdown-item:hover {
-          background-color: #f0f0f0;
+
+        .dropdown-content .dropdown-item:hover {
+          background-color: #f1f1f1;
         }
-        .checkbox {
-          margin-right: 8px;
-        }
-        .submit-btn {
+
+        .dropdown-item.selected {
           background-color: #6B4EFF;
           color: white;
-          padding: 8px 16px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: bold;
-          width: 100%;
-          margin-top: 8px;
         }
       </style>
-      <div class="multiselect-container">
-        <div class="multiselect-title">Select your preferences:</div>
-        <div class="dropdown">
-          <button class="dropdown-button" id="dropdownButton">Select options</button>
-          <div class="dropdown-list" id="dropdownList">
-            <div class="dropdown-item">
-              <input type="checkbox" class="checkbox" value="Option 1" />
-              <span>Option 1</span>
-            </div>
-            <div class="dropdown-item">
-              <input type="checkbox" class="checkbox" value="Option 2" />
-              <span>Option 2</span>
-            </div>
-            <div class="dropdown-item">
-              <input type="checkbox" class="checkbox" value="Option 3" />
-              <span>Option 3</span>
-            </div>
-            <div class="dropdown-item">
-              <input type="checkbox" class="checkbox" value="Option 4" />
-              <span>Option 4</span>
-            </div>
-          </div>
+
+      <div class="dropdown-container">
+        <div class="dropdown-button" id="dropdownButton">Select options</div>
+        <div class="dropdown-content" id="dropdownContent">
+          ${trace.payload.options.map(option => `
+            <div class="dropdown-item" data-value="${option}">${option}</div>
+          `).join('')}
         </div>
-        <button class="submit-btn" id="submitMultiSelect">Submit</button>
       </div>
     `;
 
-    const dropdownButton = multiSelectContainer.querySelector('#dropdownButton');
-    const dropdownList = multiSelectContainer.querySelector('#dropdownList');
-    const checkboxes = dropdownList.querySelectorAll('.checkbox');
-    const submitButton = multiSelectContainer.querySelector('#submitMultiSelect');
+    const dropdownButton = container.querySelector('#dropdownButton');
+    const dropdownContent = container.querySelector('#dropdownContent');
+    const dropdownItems = dropdownContent.querySelectorAll('.dropdown-item');
+    let selectedOptions = [];
 
-    // Toggle dropdown list visibility
+    // Toggle dropdown visibility
     dropdownButton.addEventListener('click', () => {
-      dropdownList.classList.toggle('active');
+      dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
     });
 
-    // Capture selected options
-    submitButton.addEventListener('click', () => {
-      const selectedOptions = [];
-      checkboxes.forEach((checkbox) => {
-        if (checkbox.checked) {
-          selectedOptions.push(checkbox.value);
+    // Handle item selection
+    dropdownItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const value = item.getAttribute('data-value');
+        
+        // Toggle selection
+        if (selectedOptions.includes(value)) {
+          selectedOptions = selectedOptions.filter(opt => opt !== value);
+          item.classList.remove('selected');
+        } else {
+          selectedOptions.push(value);
+          item.classList.add('selected');
         }
+
+        // Update the dropdown button text
+        dropdownButton.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : 'Select options';
       });
-
-      if (selectedOptions.length === 0) {
-        alert('Please select at least one option.');
-        return;
-      }
-
-      const feedback = {
-        selected: selectedOptions,
-      };
-
-      console.log('Multi-select submitted:', feedback);
-
-      window.voiceflow.chat.interact({
-        type: 'complete',
-        payload: feedback,
-      });
-
-      multiSelectContainer.innerHTML = '<p>Thank you for your selections!</p>';
     });
 
-    element.appendChild(multiSelectContainer);
+    // Append the dropdown to the element
+    element.appendChild(container);
+
+    // Close the dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!container.contains(e.target)) {
+        dropdownContent.style.display = 'none';
+      }
+    });
+
+    // Handle submit if needed
+    window.voiceflow.chat.interact({
+      type: 'complete',
+      payload: { selectedOptions },
+    });
   },
 }
