@@ -535,83 +535,53 @@ export const FeedbackExtension = {
 
     feedbackContainer.innerHTML = `
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
-
         .feedback-container {
-          background-color: #f7f7f7;
-          padding: 20px;
+          background-color: #ffffff;
+          padding: 16px;
           border-radius: 8px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
           width: 100%;
-          max-width: 300px;
-          margin: 0 auto;
-          font-family: 'Roboto', sans-serif;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+          box-sizing: border-box;
+          font-family: sans-serif;
         }
         .feedback-title {
-          font-size: 16px;
-          font-weight: bold;
-          margin-bottom: 10px;
+          font-size: 14px;
+          font-weight: normal;
+          margin-bottom: 12px;
           color: #333;
-          text-align: center;
         }
         .star-rating {
-          font-size: 24px;
-          color: #ddd;
-          cursor: pointer;
+          font-size: 20px;
+          color: #e0e0e0;
           margin-bottom: 12px;
         }
         .star-rating .star {
           display: inline-block;
-          transition: color 0.2s;
         }
         .star-rating .star.active {
-          color: gold;
-        }
-        .feedback-form {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+          color: #ffd700;
         }
         textarea {
           width: 100%;
-          padding: 12px;
-          margin: 12px 0;
-          border: 1px solid #ddd;
-          border-radius: 20px;
+          padding: 8px;
+          margin: 8px 0;
+          border: 1px solid #e0e0e0;
+          border-radius: 4px;
           resize: vertical;
-          min-height: 80px;
+          min-height: 60px;
           font-size: 14px;
-          background-color: white;
-          box-shadow: none;
-          transition: border-color 0.2s;
-          font-family: 'Roboto', sans-serif;
-        }
-        textarea:focus {
-          border-color: #4a00e0;
-          outline: none;
-          box-shadow: 0 0 0 2px rgba(74, 0, 224, 0.2);
-        }
-        .textarea-placeholder {
-          color: #888;
+          box-sizing: border-box;
         }
         .submit-btn {
-          background: linear-gradient(to right, #4a00e0, #2a00a0);
+          background-color: #6B4EFF;
           color: white;
-          padding: 10px 15px;
+          padding: 8px 16px;
           border: none;
           border-radius: 4px;
           cursor: pointer;
           font-size: 14px;
           width: 100%;
-          font-family: 'Roboto', sans-serif;
-          margin-top: 12px;
-        }
-        .submit-btn:hover {
-          opacity: 0.9;
+          margin-top: 8px;
         }
       </style>
       <div class="feedback-container">
@@ -623,10 +593,8 @@ export const FeedbackExtension = {
           <span class="star" data-value="4">★</span>
           <span class="star" data-value="5">★</span>
         </div>
-        <div class="feedback-form">
-          <textarea id="feedbackText" placeholder="Share your experience with us..." class="textarea-placeholder"></textarea>
-          <button class="submit-btn" id="submitFeedback">Submit Feedback</button>
-        </div>
+        <textarea id="feedbackText" placeholder="Share your experience with us..."></textarea>
+        <button class="submit-btn" id="submitFeedback">Submit Feedback</button>
       </div>
     `;
 
