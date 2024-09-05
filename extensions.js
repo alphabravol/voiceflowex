@@ -535,13 +535,16 @@ export const FeedbackExtension = {
 
     feedbackContainer.innerHTML = `
       <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
         .feedback-container {
-          background-color: #f7f7f7; /* Unify background color */
+          background-color: #f7f7f7; /* Unified background color */
           padding: 20px;
           border-radius: 8px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
           max-width: 300px;
           margin: 0 auto;
+          font-family: 'Roboto', sans-serif; /* Modern font */
         }
         .feedback-title {
           font-size: 16px;
@@ -570,9 +573,10 @@ export const FeedbackExtension = {
           resize: vertical;
           min-height: 80px;
           font-size: 14px;
-          box-shadow: none; /* Remove shadow */
-          background-color: white; /* Ensure consistent background */
+          background-color: white;
+          box-shadow: none;
           transition: border-color 0.2s;
+          font-family: 'Roboto', sans-serif; /* Modern font */
         }
         textarea:focus {
           border-color: #4a00e0;
@@ -591,6 +595,7 @@ export const FeedbackExtension = {
           cursor: pointer;
           font-size: 14px;
           width: 100%;
+          font-family: 'Roboto', sans-serif; /* Modern font */
         }
         .submit-btn:hover {
           opacity: 0.9;
@@ -605,8 +610,8 @@ export const FeedbackExtension = {
           <span class="star" data-value="4">★</span>
           <span class="star" data-value="5">★</span>
         </div>
-        <textarea id="feedbackText" placeholder="Share your feedback with us..." class="textarea-placeholder"></textarea>
-        <button class="submit-btn" id="submitFeedback">Submit</button>
+        <textarea id="feedbackText" placeholder="Share your experience with us..." class="textarea-placeholder"></textarea>
+        <button class="submit-btn" id="submitFeedback">Submit Feedback</button>
       </div>
     `;
 
