@@ -834,7 +834,7 @@ export const MultiSelectExtension = {
           background-color: #f0f0f0;
         }
         .dropdown-item.selected {
-          background-color: #6B4EFF;
+          background-color: #cdbfe3;
           color: white;
         }
         .submit-btn {
