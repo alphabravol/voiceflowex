@@ -823,17 +823,19 @@ export const MultiSelectExtension = {
           display: block;
         }
         .dropdown-item {
-          padding: 8px 16px;
+          padding: 12px 16px;
           cursor: pointer;
+          border-bottom: 1px solid #eee;
           display: flex;
-          align-items: center;
           justify-content: space-between;
+          transition: background-color 0.3s;
         }
         .dropdown-item:hover {
           background-color: #f0f0f0;
         }
-        .checkbox {
-          margin-right: 8px;
+        .dropdown-item.selected {
+          background-color: #6B4EFF;
+          color: white;
         }
         .submit-btn {
           background-color: #6B4EFF;
@@ -853,22 +855,10 @@ export const MultiSelectExtension = {
         <div class="dropdown">
           <button class="dropdown-button" id="dropdownButton">Select options</button>
           <div class="dropdown-list" id="dropdownList">
-            <div class="dropdown-item">
-              <input type="checkbox" class="checkbox" value="Option 1" />
-              <span>Option 1</span>
-            </div>
-            <div class="dropdown-item">
-              <input type="checkbox" class="checkbox" value="Option 2" />
-              <span>Option 2</span>
-            </div>
-            <div class="dropdown-item">
-              <input type="checkbox" class="checkbox" value="Option 3" />
-              <span>Option 3</span>
-            </div>
-            <div class="dropdown-item">
-              <input type="checkbox" class="checkbox" value="Option 4" />
-              <span>Option 4</span>
-            </div>
+            <div class="dropdown-item" data-value="Option 1">Option 1</div>
+            <div class="dropdown-item" data-value="Option 2">Option 2</div>
+            <div class="dropdown-item" data-value="Option 3">Option 3</div>
+            <div class="dropdown-item" data-value="Option 4">Option 4</div>
           </div>
         </div>
         <button class="submit-btn" id="submitMultiSelect">Submit</button>
@@ -877,23 +867,36 @@ export const MultiSelectExtension = {
 
     const dropdownButton = multiSelectContainer.querySelector('#dropdownButton');
     const dropdownList = multiSelectContainer.querySelector('#dropdownList');
-    const checkboxes = dropdownList.querySelectorAll('.checkbox');
+    const dropdownItems = dropdownList.querySelectorAll('.dropdown-item');
     const submitButton = multiSelectContainer.querySelector('#submitMultiSelect');
+    let selectedOptions = [];
 
-    // Toggle dropdown list visibility
+    // Toggle dropdown visibility
     dropdownButton.addEventListener('click', () => {
       dropdownList.classList.toggle('active');
     });
 
-    // Capture selected options
-    submitButton.addEventListener('click', () => {
-      const selectedOptions = [];
-      checkboxes.forEach((checkbox) => {
-        if (checkbox.checked) {
-          selectedOptions.push(checkbox.value);
-        }
-      });
+    // Handle item selection (without checkboxes)
+    dropdownItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        const value = item.getAttribute('data-value');
 
+        // Toggle selected state
+        if (selectedOptions.includes(value)) {
+          selectedOptions = selectedOptions.filter(opt => opt !== value);
+          item.classList.remove('selected');
+        } else {
+          selectedOptions.push(value);
+          item.classList.add('selected');
+        }
+
+        // Update dropdown button text
+        dropdownButton.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : 'Select options';
+      });
+    });
+
+    // Capture selected options on submit
+    submitButton.addEventListener('click', () => {
       if (selectedOptions.length === 0) {
         alert('Please select at least one option.');
         return;
@@ -905,6 +908,7 @@ export const MultiSelectExtension = {
 
       console.log('Multi-select submitted:', feedback);
 
+      // Send data via Voiceflow
       window.voiceflow.chat.interact({
         type: 'complete',
         payload: feedback,
