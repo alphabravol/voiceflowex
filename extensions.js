@@ -792,13 +792,18 @@ export const MultiSelectExtension = {
           background-color: #f0f0f0;
           color: #333; /* Dark gray text */
           padding: 8px 16px;
-          border: 2px solid #6B4EFF; /* Purple border */
+          border: 2px solid transparent; /* Initially invisible border */
           border-radius: 4px;
           cursor: pointer;
           font-size: 14px;
           width: 100%;
           text-align: left;
           position: relative;
+         transition: border-color 0.3s; /* Smooth transition for border color */
+        }
+
+        .dropdown-button:hover {
+          border-color: #6B4EFF; /* Purple border on hover */
         }
         .dropdown-button::after {
           content: '▼';
