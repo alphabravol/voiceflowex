@@ -415,16 +415,16 @@ export const DateExtension = {
   render: ({ trace, element }) => {
     const formContainer = document.createElement('form')
 
-    // Get current date and time
+    // Get current date
     let currentDate = new Date()
     let minDate = new Date()
     minDate.setMonth(currentDate.getMonth() - 1)
     let maxDate = new Date()
     maxDate.setMonth(currentDate.getMonth() + 2)
 
-    // Convert to ISO string and remove seconds and milliseconds
-    let minDateString = minDate.toISOString().slice(0, 16)
-    let maxDateString = maxDate.toISOString().slice(0, 16)
+    // Convert to ISO string and remove time part
+    let minDateString = minDate.toISOString().slice(0, 10)
+    let maxDateString = maxDate.toISOString().slice(0, 10)
 
     formContainer.innerHTML = `
           <style>
@@ -432,7 +432,7 @@ export const DateExtension = {
               font-size: 0.8em;
               color: #888;
             }
-            input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            input[type="date"]::-webkit-calendar-picker-indicator {
                 border: none;
                 background: transparent;
                 border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
@@ -453,7 +453,7 @@ export const DateExtension = {
               background: transparent;
               border: none;
               padding: 2px;
-              border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+              border-bottom: 0.5px solid rgba(255, 0, 0, 0.5); /* Red color */
               font: normal 14px sans-serif;
               outline:none;
               margin: 5px 0;
@@ -463,7 +463,7 @@ export const DateExtension = {
               border-color: red;
             }
             .submit {
-              background: linear-gradient(to right, #2e6ee1, #2e7ff1 );
+              background: linear-gradient(to right, #e12e2e, #f12e2e ); /* Red gradient */
               border: none;
               color: white;
               padding: 10px;
@@ -476,15 +476,15 @@ export const DateExtension = {
               opacity: 1; /* Make the button fully opaque when it's enabled */
             }
           </style>
-          <label for="date">Select your date/time</label><br>
-          <div class="meeting"><input type="datetime-local" id="meeting" name="meeting" value="" min="${minDateString}" max="${maxDateString}" /></div><br>
+          <label for="date">Select your date</label><br>
+          <div class="meeting"><input type="date" id="meeting" name="meeting" value="" min="${minDateString}" max="${maxDateString}" /></div><br>
           <input type="submit" id="submit" class="submit" value="Submit" disabled="disabled">
           `
 
     const submitButton = formContainer.querySelector('#submit')
-    const datetimeInput = formContainer.querySelector('#meeting')
+    const dateInput = formContainer.querySelector('#meeting')
 
-    datetimeInput.addEventListener('input', function () {
+    dateInput.addEventListener('input', function () {
       if (this.value) {
         submitButton.disabled = false
       } else {
@@ -494,15 +494,14 @@ export const DateExtension = {
     formContainer.addEventListener('submit', function (event) {
       event.preventDefault()
 
-      const datetime = datetimeInput.value
-      console.log(datetime)
-      let [date, time] = datetime.split('T')
+      const date = dateInput.value
+      console.log(date)
 
       formContainer.querySelector('.submit').remove()
 
       window.voiceflow.chat.interact({
         type: 'complete',
-        payload: { date: date, time: time },
+        payload: { date: date },
       })
     })
     element.appendChild(formContainer)
