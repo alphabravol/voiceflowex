@@ -927,3 +927,102 @@ export const MultiSelectExtension = {
     element.appendChild(multiSelectContainer);
   },
 }
+
+export const DateTimeExtension = {
+  name: 'DateTime',
+  type: 'response',
+  match: ({ trace }) =>
+    trace.type === 'ext_datetime' || trace.payload.name === 'ext_datetime',
+  render: ({ trace, element }) => {
+    const formContainer = document.createElement('div')
+    formContainer.innerHTML = `
+      <style>
+        .datetime-picker {
+          font-family: Arial, sans-serif;
+          width: 300px;
+        }
+        .datetime-picker label {
+          display: block;
+          margin-bottom: 5px;
+          color: #888;
+          font-size: 14px;
+        }
+        .datetime-picker input[type="date"],
+        .datetime-picker input[type="time"] {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 16px;
+          background: white;
+        }
+        .datetime-picker input[type="time"] {
+          -webkit-appearance: none;
+          -moz-appearance: textfield;
+        }
+        .datetime-picker input[type="time"]::-webkit-calendar-picker-indicator {
+          display: none;
+        }
+        .datetime-picker button {
+          width: 100%;
+          padding: 10px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          font-size: 16px;
+          cursor: pointer;
+        }
+        .datetime-picker button:disabled {
+          background-color: #cccccc;
+          cursor: not-allowed;
+        }
+      </style>
+      <div class="datetime-picker">
+        <label for="departure">Departure</label>
+        <input type="text" id="departure" value="San Francisco" readonly>
+        <label for="date">Date</label>
+        <input type="date" id="date" required>
+        <label for="time">Time</label>
+        <input type="time" id="time" required step="900">
+        <button id="submit" disabled>OK</button>
+      </div>
+    `
+
+    const dateInput = formContainer.querySelector('#date')
+    const timeInput = formContainer.querySelector('#time')
+    const submitButton = formContainer.querySelector('#submit')
+
+    const updateSubmitButton = () => {
+      submitButton.disabled = !(dateInput.value && timeInput.value)
+    }
+
+    dateInput.addEventListener('input', updateSubmitButton)
+    timeInput.addEventListener('input', updateSubmitButton)
+
+    submitButton.addEventListener('click', (event) => {
+      event.preventDefault()
+      const date = dateInput.value
+      const time = timeInput.value
+      const combinedDateTime = `${date} ${time}`
+      console.log(`Selected date and time: ${combinedDateTime}`)
+      window.voiceflow.chat.interact({
+        type: 'complete',
+        payload: { dateTime: combinedDateTime },
+      })
+    })
+
+    // Set min and max date
+    const today = new Date()
+    const minDate = new Date(today)
+    minDate.setDate(today.getDate() - 1)
+    const maxDate = new Date(today)
+    maxDate.setMonth(today.getMonth() + 2)
+
+    dateInput.min = minDate.toISOString().split('T')[0]
+    dateInput.max = maxDate.toISOString().split('T')[0]
+
+    element.appendChild(formContainer)
+  },
+}
