@@ -101,76 +101,79 @@ export const FormExtension = {
     trace.type === 'ext_form' || trace.payload.name === 'ext_form',
   render: ({ trace, element }) => {
     const formContainer = document.createElement('form')
-
+    
     formContainer.innerHTML = `
-          <style>
-            label {
-              font-size: 0.8em;
-              color: #888;
-            }
-            input[type="text"], input[type="email"], input[type="tel"] {
-              width: 100%;
-              border: none;
-              border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
-              background: transparent;
-              margin: 5px 0;
-              outline: none;
-            }
-            .phone {
-              width: 150px;
-            }
-            .invalid {
-              border-color: red;
-            }
-            .submit {
-              background: linear-gradient(to right, #2e6ee1, #2e7ff1 );
-              border: none;
-              color: white;
-              padding: 10px;
-              border-radius: 5px;
-              width: 100%;
-              cursor: pointer;
-            }
-          </style>
-
-          <label for="name">Name</label>
-          <input type="text" class="name" name="name" required><br><br>
-
-          <label for="email">Email</label>
-          <input type="email" class="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Invalid email address"><br><br>
-
-          <label for="phone">Phone Number</label>
-          <input type="tel" class="phone" name="phone" required pattern="\\d+" title="Invalid phone number, please enter only numbers"><br><br>
-
-          <input type="submit" class="submit" value="Submit">
-        `
-
+      <style>
+        form {
+          background-color: white;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          max-width: 300px;
+          margin: 0 auto;
+        }
+        label {
+          display: block;
+          margin-bottom: 5px;
+          font-size: 14px;
+          color: #333;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 15px;
+          border: 1px solid #ddd;
+          border-radius: 20px;
+          box-sizing: border-box;
+          font-size: 14px;
+        }
+        .submit {
+          background: linear-gradient(to right, #8e2de2, #4a00e0);
+          color: white;
+          padding: 10px;
+          border: none;
+          border-radius: 20px;
+          width: 100%;
+          cursor: pointer;
+          font-size: 16px;
+          transition: opacity 0.3s;
+        }
+        .submit:hover {
+          opacity: 0.9;
+        }
+      </style>
+      
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+      
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+      
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required>
+      
+      <button type="submit" class="submit">Submit</button>
+    `
+    
     formContainer.addEventListener('submit', function (event) {
       event.preventDefault()
-
-      const name = formContainer.querySelector('.name')
-      const email = formContainer.querySelector('.email')
-      const phone = formContainer.querySelector('.phone')
-
-      if (
-        !name.checkValidity() ||
-        !email.checkValidity() ||
-        !phone.checkValidity()
-      ) {
-        name.classList.add('invalid')
-        email.classList.add('invalid')
-        phone.classList.add('invalid')
+      
+      const name = formContainer.querySelector('#name')
+      const email = formContainer.querySelector('#email')
+      const phone = formContainer.querySelector('#phone')
+      
+      if (!name.checkValidity() || !email.checkValidity() || !phone.checkValidity()) {
         return
       }
-
+      
       formContainer.querySelector('.submit').remove()
-
+      
       window.voiceflow.chat.interact({
         type: 'complete',
         payload: { name: name.value, email: email.value, phone: phone.value },
       })
     })
-
+    
     element.appendChild(formContainer)
   },
 }
