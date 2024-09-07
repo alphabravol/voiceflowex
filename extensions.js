@@ -940,95 +940,78 @@ export const DateTimeExtension = {
         .datetime-picker {
           font-family: Arial, sans-serif;
           width: 300px;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+          padding: 16px;
         }
         .datetime-picker label {
           display: block;
-          margin-bottom: 5px;
+          margin-bottom: 8px;
           color: #888;
           font-size: 14px;
         }
-        .datetime-picker input[type="text"] {
+        .datetime-picker input[type="date"],
+        .datetime-picker input[type="time"] {
           width: 100%;
           padding: 10px;
-          margin-bottom: 10px;
-          border: none;
-          border-bottom: 1px solid #ddd;
+          margin-bottom: 16px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
           font-size: 16px;
           background: white;
         }
-        .datetime-picker .time-select {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 10px;
+        .datetime-picker input[type="time"] {
+          -webkit-appearance: none;
+          -moz-appearance: textfield;
         }
-        .datetime-picker .time-select button {
-          padding: 5px 10px;
-          background-color: #f0f0f0;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 14px;
-          cursor: pointer;
+        .datetime-picker input[type="time"]::-webkit-calendar-picker-indicator {
+          display: none;
         }
-        .datetime-picker .time-select button.selected {
-          background-color: #007bff;
-          color: white;
-        }
-        .datetime-picker button#submit {
+        .datetime-picker button {
           width: 100%;
-          padding: 10px;
+          padding: 12px;
           background-color: #007bff;
           color: white;
           border: none;
           border-radius: 4px;
           font-size: 16px;
           cursor: pointer;
+          transition: background-color 0.3s;
         }
-        .datetime-picker button#submit:disabled {
+        .datetime-picker button:hover {
+          background-color: #0056b3;
+        }
+        .datetime-picker button:disabled {
           background-color: #cccccc;
           cursor: not-allowed;
         }
       </style>
       <div class="datetime-picker">
-        <label for="departure">Departure</label>
-        <input type="text" id="departure" value="San Francisco" readonly>
         <label for="date">Date</label>
         <input type="date" id="date" required>
-        <label>Time</label>
-        <div class="time-select">
-          <button type="button" data-time="00">00</button>
-          <button type="button" data-time="15">15</button>
-          <button type="button" data-time="30">30</button>
-          <button type="button" data-time="45">45</button>
-        </div>
+        <label for="time">Time</label>
+        <input type="time" id="time" required step="900">
         <button id="submit" disabled>OK</button>
       </div>
     `
 
     const dateInput = formContainer.querySelector('#date')
-    const timeButtons = formContainer.querySelectorAll('.time-select button')
+    const timeInput = formContainer.querySelector('#time')
     const submitButton = formContainer.querySelector('#submit')
-    let selectedTime = null
 
     const updateSubmitButton = () => {
-      submitButton.disabled = !(dateInput.value && selectedTime)
+      submitButton.disabled = !(dateInput.value && timeInput.value)
     }
 
     dateInput.addEventListener('input', updateSubmitButton)
-
-    timeButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        timeButtons.forEach(btn => btn.classList.remove('selected'))
-        button.classList.add('selected')
-        selectedTime = button.dataset.time
-        updateSubmitButton()
-      })
-    })
+    timeInput.addEventListener('input', updateSubmitButton)
 
     submitButton.addEventListener('click', (event) => {
       event.preventDefault()
       const date = dateInput.value
-      const time = selectedTime
-      const combinedDateTime = `${date} ${time}:00`
+      const time = timeInput.value
+      const combinedDateTime = `${date} ${time}`
       console.log(`Selected date and time: ${combinedDateTime}`)
       window.voiceflow.chat.interact({
         type: 'complete',
@@ -1045,6 +1028,18 @@ export const DateTimeExtension = {
 
     dateInput.min = minDate.toISOString().split('T')[0]
     dateInput.max = maxDate.toISOString().split('T')[0]
+
+    // Set time picker to 15-minute intervals
+    timeInput.addEventListener('input', function() {
+      const time = this.value.split(':')
+      const hours = parseInt(time[0])
+      let minutes = Math.round(parseInt(time[1]) / 15) * 15
+      if (minutes === 60) {
+        minutes = 0
+        hours = (hours + 1) % 24
+      }
+      this.value = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+    })
 
     element.appendChild(formContainer)
   },
