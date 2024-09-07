@@ -128,7 +128,7 @@ export const FormExtension = {
           font-size: 14px;
         }
         .submit {
-          background: linear-gradient(to right, #8e2de2, #4a00e0);
+          background: linear-gradient(135deg, #8A2BE2, #6B4EFF);
           color: white;
           padding: 10px;
           border: none;
@@ -586,7 +586,7 @@ export const FeedbackExtension = {
           border-color: #6B4EFF; /* Change border color on hover */
         }
         .submit-btn {
-          background-color: #6B4EFF;
+          background-color: linear-gradient(135deg, #6B4EFF, #8A2BE2);
           color: white;
           padding: 8px 16px;
           border: none;
@@ -596,6 +596,7 @@ export const FeedbackExtension = {
           font-weight: bold; /* Match title font weight */
           width: 100%;
           margin-top: 8px;
+          transition: background 0.3s ease;
         }
       </style>
       <div class="feedback-container">
