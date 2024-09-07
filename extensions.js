@@ -940,22 +940,19 @@ export const DateTimeExtension = {
         .datetime-picker {
           font-family: Arial, sans-serif;
           width: 300px;
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          padding: 16px;
         }
         .datetime-picker label {
           display: block;
-          margin-bottom: 8px;
+          margin-bottom: 5px;
           color: #888;
           font-size: 14px;
         }
+        .datetime-picker input[type="text"],
         .datetime-picker input[type="date"],
         .datetime-picker input[type="time"] {
           width: 100%;
           padding: 10px;
-          margin-bottom: 16px;
+          margin-bottom: 10px;
           border: 1px solid #ddd;
           border-radius: 4px;
           font-size: 16px;
@@ -966,21 +963,26 @@ export const DateTimeExtension = {
           -moz-appearance: textfield;
         }
         .datetime-picker input[type="time"]::-webkit-calendar-picker-indicator {
-          display: none;
+          background: transparent;
+          bottom: 0;
+          color: transparent;
+          cursor: pointer;
+          height: auto;
+          left: 0;
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: auto;
         }
         .datetime-picker button {
           width: 100%;
-          padding: 12px;
+          padding: 10px;
           background-color: #007bff;
           color: white;
           border: none;
           border-radius: 4px;
           font-size: 16px;
           cursor: pointer;
-          transition: background-color 0.3s;
-        }
-        .datetime-picker button:hover {
-          background-color: #0056b3;
         }
         .datetime-picker button:disabled {
           background-color: #cccccc;
@@ -988,6 +990,8 @@ export const DateTimeExtension = {
         }
       </style>
       <div class="datetime-picker">
+        <label for="departure">Departure</label>
+        <input type="text" id="departure" value="San Francisco" readonly>
         <label for="date">Date</label>
         <input type="date" id="date" required>
         <label for="time">Time</label>
@@ -1029,8 +1033,8 @@ export const DateTimeExtension = {
     dateInput.min = minDate.toISOString().split('T')[0]
     dateInput.max = maxDate.toISOString().split('T')[0]
 
-    // Set time picker to 15-minute intervals
-    timeInput.addEventListener('input', function() {
+    // Ensure time picker only allows 15-minute intervals
+    timeInput.addEventListener('change', function() {
       const time = this.value.split(':')
       const hours = parseInt(time[0])
       let minutes = Math.round(parseInt(time[1]) / 15) * 15
