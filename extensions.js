@@ -947,24 +947,33 @@ export const DateTimeExtension = {
           color: #888;
           font-size: 14px;
         }
-        .datetime-picker input[type="date"],
-        .datetime-picker input[type="time"] {
+        .datetime-picker input[type="text"] {
           width: 100%;
           padding: 10px;
           margin-bottom: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
+          border: none;
+          border-bottom: 1px solid #ddd;
           font-size: 16px;
           background: white;
         }
-        .datetime-picker input[type="time"] {
-          -webkit-appearance: none;
-          -moz-appearance: textfield;
+        .datetime-picker .time-select {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
         }
-        .datetime-picker input[type="time"]::-webkit-calendar-picker-indicator {
-          display: none;
+        .datetime-picker .time-select button {
+          padding: 5px 10px;
+          background-color: #f0f0f0;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 14px;
+          cursor: pointer;
         }
-        .datetime-picker button {
+        .datetime-picker .time-select button.selected {
+          background-color: #007bff;
+          color: white;
+        }
+        .datetime-picker button#submit {
           width: 100%;
           padding: 10px;
           background-color: #007bff;
@@ -974,7 +983,7 @@ export const DateTimeExtension = {
           font-size: 16px;
           cursor: pointer;
         }
-        .datetime-picker button:disabled {
+        .datetime-picker button#submit:disabled {
           background-color: #cccccc;
           cursor: not-allowed;
         }
@@ -984,28 +993,42 @@ export const DateTimeExtension = {
         <input type="text" id="departure" value="San Francisco" readonly>
         <label for="date">Date</label>
         <input type="date" id="date" required>
-        <label for="time">Time</label>
-        <input type="time" id="time" required step="900">
+        <label>Time</label>
+        <div class="time-select">
+          <button type="button" data-time="00">00</button>
+          <button type="button" data-time="15">15</button>
+          <button type="button" data-time="30">30</button>
+          <button type="button" data-time="45">45</button>
+        </div>
         <button id="submit" disabled>OK</button>
       </div>
     `
 
     const dateInput = formContainer.querySelector('#date')
-    const timeInput = formContainer.querySelector('#time')
+    const timeButtons = formContainer.querySelectorAll('.time-select button')
     const submitButton = formContainer.querySelector('#submit')
+    let selectedTime = null
 
     const updateSubmitButton = () => {
-      submitButton.disabled = !(dateInput.value && timeInput.value)
+      submitButton.disabled = !(dateInput.value && selectedTime)
     }
 
     dateInput.addEventListener('input', updateSubmitButton)
-    timeInput.addEventListener('input', updateSubmitButton)
+
+    timeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        timeButtons.forEach(btn => btn.classList.remove('selected'))
+        button.classList.add('selected')
+        selectedTime = button.dataset.time
+        updateSubmitButton()
+      })
+    })
 
     submitButton.addEventListener('click', (event) => {
       event.preventDefault()
       const date = dateInput.value
-      const time = timeInput.value
-      const combinedDateTime = `${date} ${time}`
+      const time = selectedTime
+      const combinedDateTime = `${date} ${time}:00`
       console.log(`Selected date and time: ${combinedDateTime}`)
       window.voiceflow.chat.interact({
         type: 'complete',
