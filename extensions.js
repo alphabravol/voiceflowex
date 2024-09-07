@@ -934,115 +934,106 @@ export const DateTimeExtension = {
   match: ({ trace }) =>
     trace.type === 'ext_datetime' || trace.payload.name === 'ext_datetime',
   render: ({ trace, element }) => {
-    const formContainer = document.createElement('div')
+    const formContainer = document.createElement('form')
+
+    // Get current date and set min/max dates for date picker
+    let currentDate = new Date()
+    let minDate = new Date()
+    minDate.setMonth(currentDate.getMonth() - 1)
+    let maxDate = new Date()
+    maxDate.setMonth(currentDate.getMonth() + 2)
+
+    // Convert to ISO string and remove time part
+    let minDateString = minDate.toISOString().slice(0, 10)
+    let maxDateString = maxDate.toISOString().slice(0, 10)
+
     formContainer.innerHTML = `
       <style>
-        .datetime-picker {
-          font-family: Arial, sans-serif;
-          width: 300px;
-        }
-        .datetime-picker label {
-          display: block;
-          margin-bottom: 5px;
+        label {
+          font-size: 0.8em;
           color: #888;
-          font-size: 14px;
         }
-        .datetime-picker input[type="text"],
-        .datetime-picker input[type="date"],
-        .datetime-picker input[type="time"] {
-          width: 100%;
-          padding: 10px;
-          margin-bottom: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 16px;
-          background: white;
-        }
-        .datetime-picker input[type="time"] {
-          -webkit-appearance: none;
-          -moz-appearance: textfield;
-        }
-        .datetime-picker input[type="time"]::-webkit-calendar-picker-indicator {
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+          border: none;
           background: transparent;
-          bottom: 0;
+          border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+          outline: none;
           color: transparent;
           cursor: pointer;
-          height: auto;
-          left: 0;
           position: absolute;
-          right: 0;
-          top: 0;
-          width: auto;
+          padding: 6px;
+          font: normal 8px sans-serif;
         }
-        .datetime-picker button {
-          width: 100%;
-          padding: 10px;
-          background-color: #007bff;
-          color: white;
+        .meeting input {
+          background: transparent;
           border: none;
-          border-radius: 4px;
-          font-size: 16px;
-          cursor: pointer;
+          padding: 2px;
+          border-bottom: 0.5px solid rgba(255, 0, 0, 0.5); /* Red color */
+          font: normal 14px sans-serif;
+          outline: none;
+          margin: 5px 0;
         }
-        .datetime-picker button:disabled {
-          background-color: #cccccc;
-          cursor: not-allowed;
+        .meeting input:focus {
+          outline: none;
+        }
+        .submit {
+          background: linear-gradient(to right, #e12e2e, #f12e2e); /* Red gradient */
+          border: none;
+          color: white;
+          padding: 10px;
+          border-radius: 5px;
+          width: 100%;
+          cursor: pointer;
+          opacity: 0.3;
+        }
+        .submit:enabled {
+          opacity: 1; /* Make the button fully opaque when it's enabled */
         }
       </style>
-      <div class="datetime-picker">
-        <label for="departure">Departure</label>
-        <input type="text" id="departure" value="San Francisco" readonly>
-        <label for="date">Date</label>
-        <input type="date" id="date" required>
-        <label for="time">Time</label>
-        <input type="time" id="time" required step="900">
-        <button id="submit" disabled>OK</button>
+      <label for="date">Select your date</label><br>
+      <div class="meeting">
+        <input type="date" id="meeting-date" name="meeting-date" value="" min="${minDateString}" max="${maxDateString}" />
       </div>
+      <label for="time">Select your time</label><br>
+      <div class="meeting">
+        <input type="time" id="meeting-time" name="meeting-time" step="900" value="00:00" />
+      </div><br>
+      <input type="submit" id="submit" class="submit" value="Submit" disabled="disabled">
     `
 
-    const dateInput = formContainer.querySelector('#date')
-    const timeInput = formContainer.querySelector('#time')
     const submitButton = formContainer.querySelector('#submit')
+    const dateInput = formContainer.querySelector('#meeting-date')
+    const timeInput = formContainer.querySelector('#meeting-time')
 
-    const updateSubmitButton = () => {
-      submitButton.disabled = !(dateInput.value && timeInput.value)
+    // Enable submit button only when both date and time are selected
+    function updateSubmitButton() {
+      if (dateInput.value && timeInput.value) {
+        submitButton.disabled = false
+      } else {
+        submitButton.disabled = true
+      }
     }
 
     dateInput.addEventListener('input', updateSubmitButton)
     timeInput.addEventListener('input', updateSubmitButton)
 
-    submitButton.addEventListener('click', (event) => {
+    formContainer.addEventListener('submit', function (event) {
       event.preventDefault()
       const date = dateInput.value
       const time = timeInput.value
-      const combinedDateTime = `${date} ${time}`
-      console.log(`Selected date and time: ${combinedDateTime}`)
+
+      // Combine date and time into a single dateTime string in ISO format
+      const dateTime = `${date}T${time}:00`
+
+      console.log(`Selected dateTime: ${dateTime}`)
+
+      // Send the dateTime as one payload in the required format
+      formContainer.querySelector('.submit').remove()
       window.voiceflow.chat.interact({
         type: 'complete',
-        payload: { dateTime: combinedDateTime },
+        payload: { dateTime: dateTime },
       })
-    })
-
-    // Set min and max date
-    const today = new Date()
-    const minDate = new Date(today)
-    minDate.setDate(today.getDate() - 1)
-    const maxDate = new Date(today)
-    maxDate.setMonth(today.getMonth() + 2)
-
-    dateInput.min = minDate.toISOString().split('T')[0]
-    dateInput.max = maxDate.toISOString().split('T')[0]
-
-    // Ensure time picker only allows 15-minute intervals
-    timeInput.addEventListener('change', function() {
-      const time = this.value.split(':')
-      const hours = parseInt(time[0])
-      let minutes = Math.round(parseInt(time[1]) / 15) * 15
-      if (minutes === 60) {
-        minutes = 0
-        hours = (hours + 1) % 24
-      }
-      this.value = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
     })
 
     element.appendChild(formContainer)
