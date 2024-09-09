@@ -1040,3 +1040,108 @@ export const DateTimeExtension = {
     element.appendChild(formContainer)
   },
 }
+
+export const MenuExtension = {
+  name: 'MenuExtension',
+  type: 'response',
+  match: ({ trace }) =>
+    trace.type === 'ext_menu' || trace.payload.name === 'ext_menu',
+  render: ({ trace, element }) => {
+    const menuContainer = document.createElement('div');
+
+    menuContainer.innerHTML = `
+      <style>
+        .menu-container {
+          background-color: #ffffff;
+          padding: 16px;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          width: 100%;
+          max-width: 500px;
+          box-sizing: border-box;
+          font-family: sans-serif;
+          text-align: center;
+          display: grid;
+          grid-template-areas: 
+            "drinks desserts"
+            "mainMenu mainMenu";
+          grid-template-columns: 1fr 1fr;
+          grid-gap: 10px;
+        }
+        .menu-option {
+          position: relative;
+          z-index: 1;
+          cursor: pointer;
+          border: none;
+          border-radius: 8px;
+          overflow: hidden;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transition: transform 0.4s ease;
+        }
+        .menu-option img {
+          width: 100%;
+          height: 100px; /* Adjust this height as needed */
+          object-fit: cover;
+        }
+        .menu-option:hover {
+          transform: scale(1.5); /* Slightly scale up on hover for effect */
+          z-index: 10;
+        }
+        .drinks {
+          grid-area: drinks;
+        }
+        .desserts {
+          grid-area: desserts;
+        }
+        .mainMenu {
+          grid-area: mainMenu;
+        }
+      </style>
+
+      <div class="menu-container">
+        <div class="menu-option drinks" id="drinksOption">
+          <img src="https://i.ibb.co/7Rk6pyQ/drinks-2-2.jpg" alt="Drinks">
+        </div>
+        <div class="menu-option desserts" id="dessertsOption">
+          <img src="https://i.ibb.co/0t3nvz8/dessert-1.jpg" alt="Desserts">
+        </div>
+        <div class="menu-option mainMenu" id="mainMenuOption">
+          <img src="https://i.ibb.co/PYgYP4K/main-2-2.jpg" alt="Main Menu">
+        </div>
+      </div>
+    `;
+
+    // Add event listeners to handle image clicks
+    const drinksOption = menuContainer.querySelector('#drinksOption');
+    const dessertsOption = menuContainer.querySelector('#dessertsOption');
+    const mainMenuOption = menuContainer.querySelector('#mainMenuOption');
+
+    drinksOption.addEventListener('click', () => {
+      console.log('Drinks option selected');
+      window.voiceflow.chat.interact({
+        type: 'complete',
+        payload: { selected: 'drinks' },
+      });
+    });
+
+    dessertsOption.addEventListener('click', () => {
+      console.log('Desserts option selected');
+      window.voiceflow.chat.interact({
+        type: 'complete',
+        payload: { selected: 'desserts' },
+      });
+    });
+
+    mainMenuOption.addEventListener('click', () => {
+      console.log('Main menu option selected');
+      window.voiceflow.chat.interact({
+        type: 'complete',
+        payload: { selected: 'main_menu' },
+      });
+    });
+
+    element.appendChild(menuContainer);
+  },
+}
