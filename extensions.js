@@ -1054,10 +1054,10 @@ export const MenuExtension = {
         .menu-container {
           background-color: #ffffff;
           padding: 16px;
-          border-radius: 8px;
+          border-radius: 20px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
           width: 100%;
-          max-width: 500px;
+          max-width: 600px;
           box-sizing: border-box;
           font-family: sans-serif;
           text-align: center;
